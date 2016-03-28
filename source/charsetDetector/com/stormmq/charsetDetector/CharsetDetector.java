@@ -63,21 +63,18 @@ public final class CharsetDetector
 			}
 			return AsciiCharset;
 		}
-		else
+		// There is a slight possibility that the amount of data to read is too short and so Notify() isn't called
+		nsDetector.DoIt(code, bytesToUseToDetectCharacterSet, false);
+		nsDetector.DataEnd();
+		final Charset charset = charsetDetectedHack[0];
+		if (charset.equals(AsciiCharset))
 		{
-			// There is a slight possibility that the amount of data to read is too short and so Notify() isn't called
-			nsDetector.DoIt(code, bytesToUseToDetectCharacterSet, false);
-			nsDetector.DataEnd();
-			final Charset charset = charsetDetectedHack[0];
-			if (charset.equals(AsciiCharset))
+			if (preferUtf8IfAsciiDetected)
 			{
-				if (preferUtf8IfAsciiDetected)
-				{
-					return Utf8Charset;
-				}
+				return Utf8Charset;
 			}
-			return charset;
 		}
+		return charset;
 	}
 
 	private CharsetDetector()
